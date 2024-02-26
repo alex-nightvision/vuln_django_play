@@ -9,7 +9,6 @@ env:
   NIGHTVISION_TARGET: vulndjangoplay
   NIGHTVISION_APP: vulndjangoplay
   NIGHTVISION_AUTH: vulndjangoplay
-  PROJECT: testing
   
 jobs:
   test:
@@ -27,7 +26,7 @@ jobs:
 
       - name: (3) Extract API documentation from code
         run: |
-          nightvision swagger extract ./ -t ${NIGHTVISION_TARGET} --lang python -p $PROJECT || true
+          nightvision swagger extract ./ -t ${NIGHTVISION_TARGET} --lang python || true
           if [ ! -e openapi-spec.yml ]; then
               cp backup-openapi-spec.yml openapi-spec.yml
           fi
@@ -37,7 +36,7 @@ jobs:
 
       - name: (5) Scan the API
         run: |
-          nightvision scan -t ${NIGHTVISION_TARGET} -a ${NIGHTVISION_APP} -p $PROJECT > scan-results.txt
+          nightvision scan -t ${NIGHTVISION_TARGET} -a ${NIGHTVISION_APP} > scan-results.txt
           nightvision export sarif -s "$(head -n 1 scan-results.txt)" --swagger-file openapi-spec.yml
 
       - name: (6) Upload SARIF file to GitHub Security Alerts if vulnerabilities are found
